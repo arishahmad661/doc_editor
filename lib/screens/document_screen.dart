@@ -43,9 +43,7 @@ class _DocumentScreenState extends ConsumerState<DocumentScreen> {
     if(errorModel.data != null){
       titleController.text = (errorModel.data as DocumentModel).title;
       text = (errorModel.data as DocumentModel).content[0];
-      setState(() {
-
-      });
+      setState(() {});
     }
   }
 

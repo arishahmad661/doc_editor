@@ -7,6 +7,8 @@ import 'package:google_docs/repository/auth_repository.dart';
 import 'package:google_docs/repository/document_repository.dart';
 import 'package:routemaster/routemaster.dart';
 
+import '../colors.dart';
+
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
@@ -36,12 +38,20 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: AppBar(
-        actions: [
-          IconButton(onPressed: (){createDocument(context, ref);}, icon: const Icon(Icons.add)),
-          IconButton(onPressed: (){signOut(ref);}, icon: const Icon(Icons.logout)),
-        ],
-      ),
+      drawer: Drawer(),
+        appBar: AppBar(
+          bottom: PreferredSize(preferredSize: Size.fromHeight(1),child: Container(decoration: BoxDecoration(border: Border.all(color: kGrayColor, width: 0.1)),),),
+          backgroundColor: kWhiteColor,
+          elevation: 0,
+          title: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 9),
+            child: Image.asset("assets/images/docs-logo.png", height: 40,),
+          ),
+          actions: [
+            IconButton(onPressed: (){createDocument(context, ref);}, icon: const Icon(Icons.add)),
+            IconButton(onPressed: (){signOut(ref);}, icon: const Icon(Icons.logout)),
+          ],
+        ),
       body: FutureBuilder<ErrorModel>(
         future: ref.watch(documentRepositoryProvider).getDocument(ref.watch(userProvider)!.token),
         builder: (context, snapshot){
@@ -49,27 +59,31 @@ class HomeScreen extends ConsumerWidget {
             return Loader();
           }
           return Center(
-            child: Container(
-              margin: EdgeInsets.only(top: 10),
+            child: SizedBox(
               width: 600,
-              child: ListView.builder(
+              child: GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3
+                ),
                 itemCount: snapshot.data!.data.length,
                 itemBuilder: (context, index) {
                   DocumentModel document = snapshot.data!.data[index];
-                  return SizedBox(
-                    height: 50,
-                    child: InkWell(
-                      onTap: (){
-                        navigateToDocument(context, document.id);
-                      },
-                      child: Card(
-                        child: Center(
-                          child: Text(
-                            document.title,
-                            style: TextStyle(
-                            fontSize: 17
-                          ),),
-                        ),
+                  return InkWell(
+                    onTap: (){
+                      navigateToDocument(context, document.id);
+                    },
+                    child: Card(
+                      child: Column(
+                        children: [
+                          Center(
+                            child: Text(
+                              document.title,
+                              style: TextStyle(
+                              fontSize: 17
+                            ),),
+                          ),
+
+                        ],
                       ),
                     ),
                   );
